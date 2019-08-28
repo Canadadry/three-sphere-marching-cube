@@ -8,3 +8,5 @@ I have extand code from `https://github.com/Canadadry/threejs-one-marching-cube`
 Next step is using noise function to generate cave :-) 
 
 See `index.html` for more info about it
+
+![Alt text](/doc/screen.png?raw=true "What it look like")
