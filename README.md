@@ -9,4 +9,4 @@ Next step is using noise function to generate cave :-)
 
 See `index.html` for more info about it
 
-![Alt text](/doc/screen.png?raw=true "What it look like")
+![Alt text](/doc/screen0.png?raw=true "What it look like")
