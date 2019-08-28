@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script src="js/three-orbit-controls.js"></script>
+		<script src="js/marching-cube-geometry.js"></script>
+		<script>
+
+			var scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0x8FBCD4 );
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+			camera.position.set( 17, 17, 17 );
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+
+				controls.update();
+				renderer.render( scene, camera );
+			};
+
+			let size = 20;
+			let field = [];
+			let center = new THREE.Vector3(size/2,size/2,size/2);
+			let radius = 2*size/6;
+			for(let i=0;i<size;i++)
+			{
+				field[i]=[];
+				for(let j=0;j<size;j++)
+				{
+					field[i][j]=[];
+					for(let k=0;k<size;k++)
+					{
+						let point = new THREE.Vector3(i,j,k);
+						field[i][j][k] = point.distanceTo(center) < radius ? 1 : 0;
+					}	
+				}				
+			}
+
+			const sphere = new THREE.Group();
+
+			for(let i=0;i<size-1;i++)
+			{
+				for(let j=0;j<size-1;j++)
+				{
+					for(let k=0;k<size-1;k++)
+					{
+						let marchingIdx = extractMarchingIdFromFieldAt(field,i,j,k); 
+						var geometry = MarchinCubeGeoMetry(marchingIdx);
+						var material = new THREE.MeshLambertMaterial( { color: 0x0087E6 } );
+						var marchingCube = new THREE.Mesh( geometry, material );
+						marchingCube.position.set( i-center.x,j-center.y,k-center.z );
+						sphere.add( marchingCube );
+
+					}	
+				}				
+			}
+
+			scene.add( sphere );
+
+			const light1 = new THREE.DirectionalLight( 0xffffff, 2 );
+			light1.position.set( 3, 4, 2 );
+			scene.add( light1 );
+			
+			const light2 = new THREE.DirectionalLight( 0xffffff, 2 );
+			light2.position.set( -4, -3, 2 );
+			scene.add( light2 );
+			
+			animate();
+
+		</script>
+	</body>
+</html>
