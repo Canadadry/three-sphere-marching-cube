@@ -31,7 +31,7 @@
 				renderer.render( scene, camera );
 			};
 
-			let size = 20;
+			let size = 10;
 			let field = [];
 			let center = new THREE.Vector3(size/2,size/2,size/2);
 			let radius = 2*size/6;
@@ -50,6 +50,7 @@
 			}
 
 			const sphere = new THREE.Group();
+			let vertices = [];
 
 			for(let i=0;i<size-1;i++)
 			{
@@ -58,18 +59,25 @@
 					for(let k=0;k<size-1;k++)
 					{
 						let marchingIdx = extractMarchingIdFromFieldAt(field,i,j,k); 
-						var geometry = MarchinCubeGeoMetry(marchingIdx);
-						var material = new THREE.MeshLambertMaterial( { color: 0x0087E6 } );
-						var marchingCube = new THREE.Mesh( geometry, material );
-						marchingCube.position.set( i-center.x,j-center.y,k-center.z );
-						sphere.add( marchingCube );
-
+						let pos = new THREE.Vector3( i-center.x,j-center.y,k-center.z)
+						vertices = vertices.concat(getMarchinCubeVertex(marchingIdx,pos));
 					}	
 				}				
 			}
 
-			scene.add( sphere );
-
+			var geometry = new THREE.Geometry();
+			for(let i=0; i<vertices.length-3;i+=3)
+			{
+				geometry.vertices.push(	vertices[i ]);
+				geometry.vertices.push(	vertices[i+1]);
+				geometry.vertices.push(	vertices[i+2]);
+				geometry.faces.push( new THREE.Face3( i, i+1, i+2 ) );
+			}	
+			geometry.computeFaceNormals();
+			var material = new THREE.MeshLambertMaterial( { color: 0x0087E6 } );
+			var marchingCube = new THREE.Mesh( geometry, material );
+			scene.add( marchingCube );
+			
 			const light1 = new THREE.DirectionalLight( 0xffffff, 2 );
 			light1.position.set( 3, 4, 2 );
 			scene.add( light1 );

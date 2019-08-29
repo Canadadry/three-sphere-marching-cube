@@ -22,49 +22,46 @@ function dataToMarchingCubeIndex(d)
 	return d[0]+2*d[1]+4*d[2]+8*d[3]+16*d[4]+32*d[5]+64*d[6]+128*d[7];
 }
 
-function MarchinCubeGeoMetry(id)
-{			
-	var geometry = new THREE.Geometry();
+function getMarchinCubeVertex(id,pos)
+{	
+	let vertices = [];
 	for(var face = 0; face < 5; face++)
 	{
 		var addedFace = false;
 		for(var tri = 0; tri < 3; tri++)
 		{
 			var edgeCase = triangleTable[id][3*face + tri];
-			if (edgeCase == -1) break;
+			if (edgeCase == -1) return vertices;
 			addedFace = true;
 
 			var vertStart = edgeVertexOffsets[edgeCase][0];
 			var vertEnd   = edgeVertexOffsets[edgeCase][1];
 
-			geometry.vertices.unshift(
+			vertices.unshift(
 				new THREE.Vector3(
-					(vertStart.x+vertEnd.x)/2-0.5,
-					(vertStart.y+vertEnd.y)/2-0.5,
-					(vertStart.z+vertEnd.z)/2-0.5,
+					(vertStart.x+vertEnd.x)/2+pos.x,
+					(vertStart.y+vertEnd.y)/2+pos.y,
+					(vertStart.z+vertEnd.z)/2+pos.z,
 				)
 			);
 		}
-
-		if(addedFace) geometry.faces.push( new THREE.Face3( face*3, face*3+1, face*3+2 ) );
-		else break;
 	}
-	geometry.computeFaceNormals();
-	return geometry;
+	return vertices;
 }
+
 
 // data from https://gist.github.com/ttammear/a3cdc214023f8c92b1f0bf27e7cc08d1
 var triangleTable = [
-/*   0 */	[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   1 */	[0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   2 */	[0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   3 */	[1, 8, 3, 9, 8, 1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   4 */	[1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   5 */	[0, 8, 3, 1, 2, 10, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   6 */	[9, 2, 10, 0, 2, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   7 */	[2, 8, 3, 2, 10, 8, 10, 9, 8, -1, -1, -1, -1, -1, -1, -1],
-/*   8 */	[3, 11, 2, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-/*   9 */	[0, 11, 2, 8, 11, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+/*   0 */	[-1],
+/*   1 */	[0, 8, 3, -1],
+/*   2 */	[0, 1, 9, -1],
+/*   3 */	[1, 8, 3, 9, 8, 1, -1],
+/*   4 */	[1, 2, 10, -1],
+/*   5 */	[0, 8, 3, 1, 2, 10, -1],
+/*   6 */	[9, 2, 10, 0, 2, 9, -1],
+/*   7 */	[2, 8, 3, 2, 10, 8, 10, 9, 8, -1],
+/*   8 */	[3, 11, 2, -1],
+/*   9 */	[0, 11, 2, 8, 11, 0, -1],
 /*  10 */	[1, 9, 0, 2, 3, 11, -1],
 /*  11 */	[1, 11, 2, 1, 9, 11, 9, 8, 11, -1],
 /*  12 */	[3, 10, 1, 11, 10, 3, -1],
